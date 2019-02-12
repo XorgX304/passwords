@@ -83,7 +83,7 @@ typedef struct _crack_opt_t {
     uint64_t              start_cbn, end_cbn, thread_cbn;
     std::atomic<uint64_t> complete, total_cbn;
     std::atomic<bool>     found, stopped;
-    int                   pwd_idx[256];
+    int                   pwd_idx[256], pwd_len;
     char                  start_pwd[256], end_pwd[256];
     int                   alpha_len, thread_cnt;
     char                  alphabet[128];
@@ -161,9 +161,9 @@ class cracker {
     }
 
     // convert integer to index values
-    void cbn2idx(int idx[], uint64_t cbn) {
+    int cbn2idx(int idx[], uint64_t cbn) {
         uint64_t pwr = alphabet.length();
-        size_t   pwd_len, i;
+        int      pwd_len, i;
         
         // set indexes to initial value
         for (i=0; i<256; i++) 
@@ -180,6 +180,7 @@ class cracker {
           idx[i] = (cbn % alphabet.length()); 
           cbn /= alphabet.length(); 
         }
+        return pwd_len;
     }
     
   public:
@@ -380,7 +381,7 @@ class cracker {
           memcpy(c[i].hash.b, hash.b, HASH_BIN_LEN);
           // set the first combination
           c[i].start_cbn = cbn;
-          cbn2idx(c[i].pwd_idx, cbn);
+          c[i].pwd_len = cbn2idx(c[i].pwd_idx, cbn);
           
           // set the last combination
           if ((i+1)==thread_cnt) {

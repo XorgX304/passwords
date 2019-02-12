@@ -90,7 +90,7 @@ static bool crack_lm3(void *param) {
     // set the initial key schedules based on pwd_idx
     for (int i=7; i>0; i--) {
       // if not set, skip it
-      if ((int)c->pwd_idx[i-1]<0) continue;
+      if (c->pwd_idx[i-1]<0) continue;
       // set key schedule for this index
       DES_SET_KEY(i);
     }

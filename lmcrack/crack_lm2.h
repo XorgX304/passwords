@@ -41,7 +41,7 @@ static bool crack_lm2(void *param) {
     
     // create password from index values
     for(i=0;i<7;i++) {
-      if((int)c->pwd_idx[i]<0)break;
+      if(c->pwd_idx[i]<0)break;
       pwd[i] = c->alphabet[c->pwd_idx[i]];
     }
       
