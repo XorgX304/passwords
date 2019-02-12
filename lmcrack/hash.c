@@ -33,7 +33,7 @@ char* lmhash(char *pwd) {
     DES_cblock       key1, key2;
     DES_key_schedule ks1, ks2;
     const char       ptext[]="KGS!@#$%";
-    static char      hash[64], lm_pwd[16];
+    static char      hash[64], lm_pwd[16]; b       
     uint8_t          ctext[16];
     size_t           i, pwd_len = strlen(pwd);
     
