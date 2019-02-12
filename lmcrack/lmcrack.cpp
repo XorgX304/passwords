@@ -107,17 +107,17 @@ typedef struct _crack_stats_t {
 
 class cracker {
   private:
-    std::mutex                            m;
-    std::condition_variable               cv;
-    std::atomic<bool>                     found;
-    std::string                           alphabet, start_pwd, end_pwd;
-    uint32_t                              cpu_cnt, thread_cnt;
-    std::atomic<uint32_t>                 thread_run;
-    uint64_t                              start_cbn, end_cbn, total_cbn;
-    std::vector<std::thread>              threads;
-    struct timespec                       ts_start, ts_end;
-    crack_opt_t                           *c;
-    hash_t                                hash;
+    std::mutex               m;
+    std::condition_variable  cv;
+    std::atomic<bool>        found;
+    std::string              alphabet, start_pwd, end_pwd;
+    uint32_t                 cpu_cnt, thread_cnt;
+    std::atomic<uint32_t>    thread_run;
+    uint64_t                 start_cbn, end_cbn, total_cbn;
+    std::vector<std::thread> threads;
+    struct timespec          ts_start, ts_end;
+    crack_opt_t              *c;
+    hash_t                   hash;
     
     // convert string to integer
     uint64_t pwd2cbn(std::string pwd) {
