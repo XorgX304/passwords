@@ -439,9 +439,14 @@ class cracker {
 
 void show_stats(cracker *c) {
     crack_stats_t s;
-    
+    #if !defined(_WIN32) && !defined(_WIN64)
+      #define PREFIX "\33[2K"
+    #else
+      #define PREFIX ""
+    #endif
+  
     if(c->get_stats(&s)) {
-      printf("\33[2K\r  [ %.2fM k/s %u%% complete. "
+      printf(PREFIX"\r  [ %.2fM k/s %u%% complete. "
           "ETA: %u days %02u hours %02u minutes %02u seconds",
           s.speed, s.percent, s.days, s.hours, s.minutes, s.seconds);
       fflush(stdout);
