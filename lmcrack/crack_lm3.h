@@ -32,66 +32,41 @@
          
 // create DES subkeys using precomputed schedules
 // using AVX2 is slightly faster than SSE2, but not by much.
-#if defined(AVX2)
+#if defined(AVX)
 #include <immintrin.h>
 
 #define DES_SET_KEY(idx) { \
     __m256i *s = (__m256i*)&ks_tbl[idx-1][c->pwd_idx[idx-1]]; \
     __m256i *p = (__m256i*)&ks[idx]; \
     __m256i *d = (__m256i*)&ks[idx-1]; \
-    if (idx == 7) { \
-        d[0] = s[0]; d[1] = s[1]; \
-        d[2] = s[2]; d[3] = s[3]; \
+    if(idx==7) { \
+      for(int i=0;i<4;i++) d[i] = s[i]; \
     } else { \
-        d[0] = _mm256_or_si256(s[0], p[0]); \
-        d[1] = _mm256_or_si256(s[1], p[1]); \
-        d[2] = _mm256_or_si256(s[2], p[2]); \
-        d[3] = _mm256_or_si256(s[3], p[3]); \
+      for(int i=0;i<4;i++) d[i] = _mm256_or_si256(p[i], s[i]); \
     } \
 }
-#elif defined(SSE2)
+#elif defined(SSE)
 #include <emmintrin.h>
 
 #define DES_SET_KEY(idx) { \
     __m128i *s = (__m128i*)&ks_tbl[idx-1][c->pwd_idx[idx-1]]; \
     __m128i *p = (__m128i*)&ks[idx]; \
     __m128i *d = (__m128i*)&ks[idx-1]; \
-    if (idx == 7) {\
-        d[0] = s[0]; d[1] = s[1]; \
-        d[2] = s[2]; d[3] = s[3]; \
-        d[4] = s[4]; d[5] = s[5]; \
-        d[6] = s[6]; d[7] = s[7]; \
+    if(idx==7) { \
+      for(int i=0;i<8;i++) d[i] = s[i]; \
     } else { \
-        d[0] = _mm_or_si128(s[0], p[0]); \
-        d[1] = _mm_or_si128(s[1], p[1]); \
-        d[2] = _mm_or_si128(s[2], p[2]); \
-        d[3] = _mm_or_si128(s[3], p[3]); \
-        d[4] = _mm_or_si128(s[4], p[4]); \
-        d[5] = _mm_or_si128(s[5], p[5]); \
-        d[6] = _mm_or_si128(s[6], p[6]); \
-        d[7] = _mm_or_si128(s[7], p[7]); \
+      for(int i=0;i<8;i++) d[i] = _mm_or_si128(p[i], s[i]); \
     } \
 }
 #else
 #define DES_SET_KEY(idx) { \
-    uint64_t *p = (uint64_t*)&ks[idx]; \
-    uint64_t *s = (uint64_t*)&ks_tbl[idx-1][c->pwd_idx[idx-1]]; \
-    uint64_t *d = (uint64_t*)&ks[idx-1]; \
-    \
-    d[ 0]=s[ 0]; d[ 1]=s[ 1]; d[ 2]=s[ 2]; d[ 3]=s[ 3]; \
-    d[ 4]=s[ 4]; d[ 5]=s[ 5]; d[ 6]=s[ 6]; d[ 7]=s[ 7]; \
-    d[ 8]=s[ 8]; d[ 9]=s[ 9]; d[10]=s[10]; d[11]=s[11]; \
-    d[12]=s[12]; d[13]=s[13]; d[14]=s[14]; d[15]=s[15]; \
-    \
-    if(idx < 7) { \
-      d[ 0] |= p[ 0]; d[ 1] |= p[ 1]; \
-      d[ 2] |= p[ 2]; d[ 3] |= p[ 3]; \
-      d[ 4] |= p[ 4]; d[ 5] |= p[ 5]; \
-      d[ 6] |= p[ 6]; d[ 7] |= p[ 7]; \
-      d[ 8] |= p[ 8]; d[ 9] |= p[ 9]; \
-      d[10] |= p[10]; d[11] |= p[11]; \
-      d[12] |= p[12]; d[13] |= p[13]; \
-      d[14] |= p[14]; d[15] |= p[15]; \
+    uint32_t *s = (uint32_t*)&ks_tbl[idx-1][c->pwd_idx[idx-1]]; \
+    uint32_t *p = (uint32_t*)&ks[idx]; \
+    uint32_t *d = (uint32_t*)&ks[idx-1]; \
+    if(idx==7) { \
+      for(int i=0;i<32;i++) d[i] = s[i]; \
+    } else { \
+      for(int i=0;i<32;i++) d[i] = p[i] | s[i]; \
     } \
 }
 #endif

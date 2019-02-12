@@ -1,10 +1,10 @@
 lmcrack:
-	g++ -Wall -O3 -fomit-frame-pointer -funroll-loops lmcrack.cpp -olmcrack -lcrypto -lpthread
+	g++ -Wall -O3 -fomit-frame-pointer -funroll-all-loops lmcrack.cpp -olmcrack -lpthread
 sse:
-	g++ -Wall -DSSE2 -msse2 -O3 -fomit-frame-pointer -funroll-loops lmcrack.cpp -olmcrack -lcrypto -lpthread
+	g++ -Wall -DSSE -msse2 -O3 -fomit-frame-pointer -funroll-all-loops lmcrack.cpp -olmcrack -lpthread
 
 avx:
-	g++ -Wall -DAVX2 -mavx2 -O3 -fomit-frame-pointer -funroll-loops lmcrack.cpp -olmcrack -lcrypto -lpthread
+	g++ -Wall -DAVX -mavx2 -O3 -fomit-frame-pointer -funroll-all-loops lmcrack.cpp -olmcrack -lpthread
 
 clean:
 	rm -rf *.o lmcrack
