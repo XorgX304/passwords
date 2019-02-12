@@ -82,9 +82,9 @@ typedef struct _crack_opt_t {
     uint64_t              start_cbn, end_cbn, thread_cbn;
     std::atomic<uint64_t> complete, total_cbn;
     std::atomic<bool>     found, stopped;
-    uint64_t              pwd_idx[256];
+    int                   pwd_idx[256];
     char                  start_pwd[256], end_pwd[256];
-    uint64_t              alpha_len, thread_cnt;
+    int                   alpha_len, thread_cnt;
     char                  alphabet[128];
     hash_t                hash;
 } crack_opt_t;
@@ -160,7 +160,7 @@ class cracker {
     }
 
     // convert integer to index values
-    void cbn2idx(uint64_t idx[], uint64_t cbn) {
+    void cbn2idx(int idx[], uint64_t cbn) {
         uint64_t pwr = alphabet.length();
         size_t   pwd_len, i;
         
@@ -212,7 +212,7 @@ class cracker {
         
         // then convert to binary
         for (i=0; i<len/2; i++) {
-          std::sscanf(&h.at(i*2), "%2x", &x);
+          sscanf(&h.at(i*2), "%2x", &x);
           out[i] = (uint8_t)x;
         }
         return true;
@@ -425,7 +425,7 @@ class cracker {
         for(size_t i=0; i<threads.size() && pwd.empty(); i++) {
           if (c[i].found) {
             for(int j=0; j<MAX_PWD; j++) {
-              if((int)c[i].pwd_idx[j]<0) break;
+              if(c[i].pwd_idx[j]<0) break;
               pwd.push_back(alphabet.at(c[i].pwd_idx[j]));
             }
           }
@@ -540,7 +540,7 @@ int main(int argc, char *argv[]) {
     printf ("  [ alphabet    : \"%s\"\n", opts.alphabet);
     printf ("  [ total pwd   : %llu\n",   (uint64_t)opts.total_cbn);
     printf ("  [ thread cbn  : %llu\n",   opts.thread_cbn);
-    printf ("  [ thread cnt  : %llu\n\n", opts.thread_cnt);
+    printf ("  [ thread cnt  : %lu\n\n",  opts.thread_cnt);
       
     #define CNT 4
     
