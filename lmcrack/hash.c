@@ -5,6 +5,9 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifdef _MSC_VER
+#include "des.h"
+#else
 #include <openssl/des.h>
 
 void DES_str_to_key (uint8_t str[], uint8_t key[]) {
@@ -24,6 +27,7 @@ void DES_str_to_key (uint8_t str[], uint8_t key[]) {
     }
     DES_set_odd_parity ((DES_cblock*)key);
 }
+#endif
 
 char* lmhash(char *pwd) {
     DES_cblock       key1, key2;
@@ -42,8 +46,8 @@ char* lmhash(char *pwd) {
     }
     
     // 3. create two DES keys
-    DES_str_to_key((uint8_t*)&lm_pwd[0], (uint8_t*)&key1);
-    DES_str_to_key((uint8_t*)&lm_pwd[7], (uint8_t*)&key2);
+    DES_str_to_key((uint8_t*)&lm_pwd[0], &key1);
+    DES_str_to_key((uint8_t*)&lm_pwd[7], &key2);
     DES_set_key(&key1, &ks1);
     DES_set_key(&key2, &ks2);
     
@@ -78,7 +82,7 @@ char* halflm(char *pwd) {
     }
     
     // 3. create two DES keys
-    DES_str_to_key((uint8_t*)&lm_pwd[0], (uint8_t*)&key);
+    DES_str_to_key((uint8_t*)&lm_pwd[0], &key);
     DES_set_key(&key, &ks);
     
     // 4. encrypt plaintext

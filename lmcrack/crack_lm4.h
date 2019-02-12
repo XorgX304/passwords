@@ -40,14 +40,14 @@
 #define DES_F(LL,R,S) {\
         LOAD_DATA_tmp(R,S,u,t,E0,E1); \
         t=ROTATE(t,4); \
-        LL^=DES_sbox[0][(u>> 2L)&0x3f]^ \
-            DES_sbox[2][(u>>10L)&0x3f]^ \
-            DES_sbox[4][(u>>18L)&0x3f]^ \
-            DES_sbox[6][(u>>26L)&0x3f]^ \
-            DES_sbox[1][(t>> 2L)&0x3f]^ \
-            DES_sbox[3][(t>>10L)&0x3f]^ \
-            DES_sbox[5][(t>>18L)&0x3f]^ \
-            DES_sbox[7][(t>>26L)&0x3f]; }
+        LL^=des_SPtrans[0][(u>> 2L)&0x3f]^ \
+            des_SPtrans[2][(u>>10L)&0x3f]^ \
+            des_SPtrans[4][(u>>18L)&0x3f]^ \
+            des_SPtrans[6][(u>>26L)&0x3f]^ \
+            des_SPtrans[1][(t>> 2L)&0x3f]^ \
+            des_SPtrans[3][(t>>10L)&0x3f]^ \
+            des_SPtrans[5][(t>>18L)&0x3f]^ \
+            des_SPtrans[7][(t>>26L)&0x3f]; }
             
 // create DES subkeys using precomputed schedules
 // using AVX2 is slightly faster than SSE2, but not by much.

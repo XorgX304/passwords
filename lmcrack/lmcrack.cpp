@@ -44,9 +44,25 @@
 
 #ifndef _MSC_VER
 #include <sys/time.h>
-#endif
-
 #include <openssl/des.h>
+#else
+#include "des.h"
+#include <windows.h>
+#include <malloc.h>
+
+#define CLOCK_MONOTONIC 0
+
+#define aligned_alloc(align,size) _aligned_malloc(size,align)
+
+int clock_gettime(int, struct timespec *spec)      //C-file part
+{  __int64 wintime; GetSystemTimeAsFileTime((FILETIME*)&wintime);
+   wintime      -=116444736000000000i64;  //1jan1601 to 1jan1970
+   spec->tv_sec  =wintime / 10000000i64;           //seconds
+   spec->tv_nsec =wintime % 10000000i64 *100;      //nano-seconds
+   return 0;
+}
+
+#endif
 
 #define MAX_PWD       7
 #define HASH_STR_LEN 16
@@ -82,7 +98,6 @@ typedef struct _crack_stats_t {
     float    speed;
 } crack_stats_t;
 
-#include "set_key.h"
 #include "crack_lm1.h"
 #include "crack_lm2.h"
 #include "crack_lm3.h"
@@ -190,7 +205,7 @@ class cracker {
         
         // ensure only hexadecimal characters
         for (i=0; i<len; i++) {
-          if (std::isxdigit((int)h.at(i)) == 0) {
+          if (isxdigit((int)h.at(i)) == 0) {
             return false; 
           }
         }
@@ -217,7 +232,7 @@ class cracker {
         
         // initialize alphabet
         std::transform(s.begin(), s.end(), s.begin(),
-          [](uint8_t c) -> uint8_t {return std::toupper(c);});
+          [](uint8_t c) -> uint8_t {return toupper(c);});
         std::sort(s.begin(),s.end());
         s.erase(std::unique(s.begin(),s.end()),s.end());
         // use default if none provided
@@ -338,14 +353,18 @@ class cracker {
         threads.clear();
         
         if (c!=NULL) {
+          #ifdef _MSC_VER
+          _aligned_free(c);
+          #else
           free(c);
+          #endif
           c=NULL;
         }
         thread_run = 0;
         found = false;
         
         c = (crack_opt_t*)aligned_alloc(32, thread_cnt*sizeof(crack_opt_t));
-        
+
         // for each available cpu
         for (size_t i=0; i<thread_cnt; i++) {
           memset(&c[i], 0, sizeof(crack_opt_t));
@@ -406,7 +425,7 @@ class cracker {
         for(size_t i=0; i<threads.size() && pwd.empty(); i++) {
           if (c[i].found) {
             for(int j=0; j<MAX_PWD; j++) {
-              if(c[i].pwd_idx[j] == ~0UL) break;
+              if(c[i].pwd_idx[j] == ~0L) break;
               pwd.push_back(alphabet.at(c[i].pwd_idx[j]));
             }
           }
@@ -519,15 +538,15 @@ int main(int argc, char *argv[]) {
     printf ("  [ start pwd   : \"%s\"\n", opts.start_pwd);
     printf ("  [ end pwd     : \"%s\"\n", opts.end_pwd);
     printf ("  [ alphabet    : \"%s\"\n", opts.alphabet);
-    printf ("  [ total pwd   : %lu\n",    (uint64_t)opts.total_cbn);
-    printf ("  [ thread cbn  : %lu\n",    opts.thread_cbn);
-    printf ("  [ thread cnt  : %lu\n\n",  opts.thread_cnt);
+    printf ("  [ total pwd   : %llu\n",   (uint64_t)opts.total_cbn);
+    printf ("  [ thread cbn  : %llu\n",   opts.thread_cbn);
+    printf ("  [ thread cnt  : %llu\n\n", opts.thread_cnt);
       
     #define CNT 4
     
     for(size_t i=0;i<CNT;i++) {
       found=false;
-      printf("  [ version %lu\n", (i+1));
+      printf("  [ version %zu\n", (i+1));
       c.start(lm[i]);
       
       // wait for threads to finish

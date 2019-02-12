@@ -37,15 +37,16 @@ static bool crack_lm1(void *param) {
     uint8_t          ctext[8];
     crack_opt_t      *c=(crack_opt_t*)param;
     
+    // create password from index values
+    for(i=0;i<7;i++) {
+      if(c->pwd_idx[i] == ~0UL)break;
+      pwd[i] = c->alphabet[c->pwd_idx[i]];
+    }
+      
     // while not stopped
     while(!c->stopped) {
-      // create password from index values
-      for(i=0;i<7;i++) {
-        if(c->pwd_idx[i] == ~0UL)break;
-        pwd[i] = c->alphabet[c->pwd_idx[i]];
-      }
       // convert password to DES odd parity key
-      DES_str_to_key(pwd, deskey);
+      DES_str_to_key(pwd, (uint8_t*)deskey);
       // create DES subkeys 
       DES_set_key(&deskey, &ks);
       // encrypt plaintext
@@ -68,10 +69,12 @@ static bool crack_lm1(void *param) {
       for(i=0;;i++) {
         // increase one. if not length of alphabet, break.
         if(++c->pwd_idx[i] != c->alpha_len) {
+          pwd[i] = c->alphabet[c->pwd_idx[i]];
           break;
         }  
         // reset index
         c->pwd_idx[i]=0;
+        pwd[i] = c->alphabet[0];
       }
     }
     // we didn't find it

@@ -40,14 +40,14 @@ static bool crack_lm2(void *param) {
     // precompute key schedules
     DES_init_keys(ks_tbl);
     
+    // create password from index values
+    for(i=0;i<7;i++) {
+      if(c->pwd_idx[i] == ~0UL)break;
+      pwd[i] = c->alphabet[c->pwd_idx[i]];
+    }
+      
     // while not stopped
     while(!c->stopped) {
-      // create password from index values
-      for(i=0;i<7;i++) {
-        if(c->pwd_idx[i] == ~0UL)break;
-        pwd[i] = c->alphabet[c->pwd_idx[i]];
-      }
-      
       // create DES subkeys from index values
       DES_set_keyx((DES_cblock*)pwd, &ks, ks_tbl);
       // encrypt plaintext
@@ -68,10 +68,12 @@ static bool crack_lm2(void *param) {
       for(i=0;;i++) {
         // increase one. if not length of alphabet, break.
         if(++c->pwd_idx[i] != c->alpha_len) {
+          pwd[i] = c->alphabet[c->pwd_idx[i]];
           break;
         }  
         // reset index
         c->pwd_idx[i]=0;
+        pwd[i] = c->alphabet[0];
       }
     }
     // we didn't find it
