@@ -41,12 +41,13 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
+#include <cinttypes>
+
+#include "des.h"
 
 #ifndef _MSC_VER
 #include <sys/time.h>
-#include <openssl/des.h>
 #else
-#include "des.h"
 #include <windows.h>
 #include <malloc.h>
 
@@ -543,9 +544,9 @@ int main(int argc, char *argv[]) {
     printf ("  [ start pwd   : \"%s\"\n", opts.start_pwd);
     printf ("  [ end pwd     : \"%s\"\n", opts.end_pwd);
     printf ("  [ alphabet    : \"%s\"\n", opts.alphabet);
-    printf ("  [ total pwd   : %llu\n",   (uint64_t)opts.total_cbn);
-    printf ("  [ thread cbn  : %llu\n",   opts.thread_cbn);
-    printf ("  [ thread cnt  : %lu\n\n",  opts.thread_cnt);
+    printf ("  [ total pwd   : %" PRIu64 "\n",   (uint64_t)opts.total_cbn);
+    printf ("  [ thread cbn  : %" PRIu64 "\n",   opts.thread_cbn);
+    printf ("  [ thread cnt  : %" PRIu32 "\n\n",  opts.thread_cnt);
       
     #define CNT 4
     

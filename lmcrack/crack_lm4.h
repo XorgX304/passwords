@@ -117,7 +117,7 @@
 #endif
 
 static bool crack_lm4(void *param) {
-    uint32_t         cbn, h[2], i, j, l, r, t, u, *k1, *k2;
+    uint32_t         h[2], l, r, t, u, *k1, *k2;
     DES_key_schedule ks_tbl[MAX_PWD][256];
     DES_key_schedule ks1[MAX_PWD];
     DES_key_schedule ks2[69*69];
@@ -125,6 +125,7 @@ static bool crack_lm4(void *param) {
     crack_opt_t      *c=(crack_opt_t*)param;
     DES_key_schedule *p;
     DES_cblock       key;
+    int              i, j, cbn;
     
     cbn = c->alpha_len;
        
@@ -154,7 +155,7 @@ static bool crack_lm4(void *param) {
     // set the initial key schedules based on pwd_idx
     for (int i=MAX_PWD; i>0; i--) {
       // if not set, skip it
-      if (c->pwd_idx[i-1] == ~0UL) continue;
+      if ((int)c->pwd_idx[i-1]<0) continue;
       // set key schedule for this index
       DES_SET_KEY(i);
     }
