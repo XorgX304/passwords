@@ -27,7 +27,6 @@
   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE. */
 
-
 static bool crack_lm1(void *param) {
     int              i;
     DES_cblock       deskey;
