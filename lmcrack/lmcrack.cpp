@@ -354,9 +354,9 @@ class cracker {
         
         if (c!=NULL) {
           #ifdef _MSC_VER
-          _aligned_free(c);
+            _aligned_free(c);
           #else
-          free(c);
+            free(c);
           #endif
           c=NULL;
         }
@@ -425,7 +425,7 @@ class cracker {
         for(size_t i=0; i<threads.size() && pwd.empty(); i++) {
           if (c[i].found) {
             for(int j=0; j<MAX_PWD; j++) {
-              if(c[i].pwd_idx[j] == ~0L) break;
+              if((int)c[i].pwd_idx[j]<0) break;
               pwd.push_back(alphabet.at(c[i].pwd_idx[j]));
             }
           }
