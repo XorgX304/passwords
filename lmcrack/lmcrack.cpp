@@ -479,8 +479,6 @@ char* getparam (int argc, char *argv[], int *i) {
     exit (0);
 }
 
-extern "C" bool crack_lm5(void*);
-
 int main(int argc, char *argv[]) {
     cracker         c;
     crack_opt_t     opts;
