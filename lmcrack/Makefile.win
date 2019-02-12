@@ -1,0 +1,8 @@
+lmcrack:
+	cl -Wall -O2 -GS- lmcrack.cpp -olmcrack
+sse:
+	cl -Wall -DSSE2 -msse2 -O2 lmcrack.cpp -olmcrack
+avx:
+	cl -Wall -DAVX2 -O2 lmcrack.cpp -olmcrack
+clean:
+	rm -rf *.o lmcrack
